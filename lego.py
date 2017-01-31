@@ -16,8 +16,13 @@ try:
     
     czl=0;
     czp=0;
+                
+    #jazda po czarnej linii
+    P=0.2 
+    I=0.03
+    D=0
 
-    vel=200
+    vel=50
     error=0
     hist=0
     war=0
@@ -58,18 +63,27 @@ try:
                 #print(lewy,prawy)
                 #dist=ins.value()
                 
-                #jazda po czarnej linii
-                P=0.3 ####P jest git, dodaj calke!!!!!!!!!!!!!!!!!!!
-                I=0.03
-                D=0
-                
-                
-                prerror=error
-                error=prawy-lewy
-                
                 #print(gr,bl,re)
-                #znalazl zielony lewym czujnikiem
-                if (lgr>110 and lbl<60 and lre<40 and czy_ziel==0):
+                
+                
+                #zakret 90 st w prawo
+                if prawy<134 and lewy>174:
+                    #czp=1
+                    czl=0
+                    Leds.set_color(Leds.LEFT,Leds.GREEN)
+                    Leds.set_color(Leds.RIGHT,Leds.YELLOW)
+                    
+                #zakret 90 st w lewo
+                if lewy<174 and prawy>134:
+                    #czl=1
+                    czp=0
+                    Leds.set_color(Leds.LEFT,Leds.YELLOW)
+                    Leds.set_color(Leds.RIGHT,Leds.GREEN)
+                    
+
+                        
+                #znalazl zielony lewym czujnikiem        
+                if (lgr>140  and lre<73 and lgr-lre>90 and czy_ziel==0):
                     czy_ziel=1
                     lm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
                     rm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
@@ -84,7 +98,7 @@ try:
                     rbl=csr.blue
                     rre=csr.red
                     prawy=(rgr+rbl+rre)
-                    while not (lgr>110 and lbl<60 and lre<40):
+                    while not (lgr>140  and lre<73 and lgr-lre>90):
                         try:
                             lm.run_forever(speed_sp=-vel/4)
                             rm.run_forever(speed_sp=vel/4)
@@ -104,7 +118,7 @@ try:
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
                 
                 #znalazl zielony prawym czujnikiem
-                if (rgr>120 and rbl<80 and rre<50 and czy_ziel==0):
+                elif (rgr>105 and rre<62 and rgr-rre>60 and czy_ziel==0):
                     czy_ziel=1
                     lm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
                     rm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
@@ -119,7 +133,7 @@ try:
                     rbl=csr.blue
                     rre=csr.red
                     prawy=(rgr+rbl+rre)
-                    while not (rgr>120 and rbl<80 and rre<50):
+                    while not (rgr>105 and rre<62 and rgr-rre>60 ):
                         try:
                             lm.run_forever(speed_sp=vel/4)
                             rm.run_forever(speed_sp=-vel/4)
@@ -139,8 +153,7 @@ try:
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
                     
                 #znajduje zielony obydwoma czujnikami            
-                if czy_ziel==1:
-                    if (lgr>110 and lbl<60 and lre<40 and rgr>120 and rbl<80 and rre<50):
+                elif czy_ziel==1 and (lgr>140 and lbl<124 and lre<73 and rgr>105 and rbl<120 and rre<62):
                         lm.run_forever(speed_sp=vel/4)
                         rm.run_forever(speed_sp=vel/4)
                         czy_ziel=2
@@ -150,7 +163,7 @@ try:
                         rm.run_forever(speed_sp=0)
                         dzwig.run_to_abs_pos(position_sp=2000,speed_sp=500)
                         dzwig.wait_while('running')    
-                        while (lgr>110 and lbl<60 and lre<40 and rgr>120 and rbl<80 and rre<50):
+                        while (lgr>140 and lbl<124 and lre<73 and rgr>105 and rbl<120 and rre<62):
                             try:
                                 lm.run_forever(speed_sp=-vel/4)
                                 rm.run_forever(speed_sp=-vel/4)
@@ -189,8 +202,7 @@ try:
                                 ins = InfraredSensor()
                 
                 #wracam z zielonego pola                
-                if czy_ziel==2:
-                    if prawy<140 and lewy<120:
+                elif czy_ziel==2 and prawy<171 and lewy<203:
                         czy_ziel=3
                         lm.run_to_rel_pos(position_sp=70,speed_sp=vel/2)
                         rm.run_to_rel_pos(position_sp=70,speed_sp=vel/2)
@@ -215,7 +227,7 @@ try:
                                 ins = InfraredSensor()
                     
                 #znalazl czerwony lewym czujnikiem
-                if (lgr<60 and lbl<50 and lre>150 and czy_czerw==0):
+                elif (lgr<100 and lbl<100 and lre>200 and czy_czerw==0 and czy_ziel==3):
                     czy_czerw=1
                     lm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
                     rm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
@@ -230,7 +242,7 @@ try:
                     rbl=csr.blue
                     rre=csr.red
                     prawy=(rgr+rbl+rre)
-                    while not (lgr<60 and lbl<50 and lre>150):
+                    while not (lgr<100 and lbl<100 and lre>200):
                         try:
                             lm.run_forever(speed_sp=-vel/4)
                             rm.run_forever(speed_sp=vel/4)
@@ -250,7 +262,7 @@ try:
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
                 
                 #znalazl czerwony prawym czujnikiem
-                if (rgr<70 and rbl<50 and rre>180 and czy_ziel==0):
+                elif (rgr<100 and rbl<100 and rre>200 and czy_ziel==0 and czy_czerw==3):
                     czy_ziel=1
                     lm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
                     rm.run_to_rel_pos(position_sp=70,speed_sp=vel) #bylo 100
@@ -265,7 +277,7 @@ try:
                     rbl=csr.blue
                     rre=csr.red
                     prawy=(rgr+rbl+rre)
-                    while not (rgr<70 and rbl<50 and rre>180):
+                    while not (rgr<100 and rbl<100 and rre>200):
                         try:
                             lm.run_forever(speed_sp=vel/4)
                             rm.run_forever(speed_sp=-vel/4)
@@ -283,119 +295,87 @@ try:
                     lm.wait_while('running')    
                     Leds.set_color(Leds.LEFT,Leds.GREEN)
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
-                if prawy<110:
-                    czp=1
-                    Leds.set_color(Leds.RIGHT,Leds.YELLOW)
-                if lewy<95:
-                    czl=1
-                    Leds.set_color(Leds.LEFT,Leds.YELLOW)
+                
                 
                 #znajdowanie czerwongo obydwoma czujnikami
-                if czy_czerw==1:
-                    if rgr<70 and rbl<50 and rre>180 and lgr<60 and lbl<50 and lre>150:
+                elif czy_czerw==1 and rgr<100 and rbl<100 and rre>200 and lgr<100 and lbl<100 and lre>200:
+                        lm.run_forever(speed_sp=vel/4)
+                        rm.run_forever(speed_sp=vel/4)
+                        czy_czerw=2
                         lm.run_forever(speed_sp=0)
                         rm.run_forever(speed_sp=0)
-                        czy_czerw=0
-                        sleep(1)
+                        dzwig.run_to_abs_pos(position_sp=0,speed_sp=500)
+                        dzwig.wait_while('running')  
+                        lm.run_to_rel_pos(position_sp=-150,speed_sp=vel)
+                        rm.run_to_rel_pos(position_sp=-150,speed_sp=vel) 
+                        lm.wait_while('running')
+                        Sound.speak('I am done').wait()
+                        break        
                 
-                if czp==1 and czl==1:
+                
+                
+               
+                
+                elif czp==1 and prawy>815 and lewy>955:
+                    
+                    while lewy>955:
+                            try:
+                                lm.run_forever(speed_sp=vel/4)
+                                rm.run_forever(speed_sp=-vel/4)
+                                lgr=csl.green
+                                lbl=csl.blue
+                                lre=csl.red
+                                lewy=lgr+lbl+lre
+                            except OSError:
+                                lm.stop()
+                                rm.stop()
+                                csl = ColorSensor('in3')
+                                csr = ColorSensor('in2')
+                                ins = InfraredSensor()
                     czp=0; czl=0
                     Leds.set_color(Leds.LEFT,Leds.GREEN)
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
-                
-                czp=0; czl=0
-                
-                if czp==1 and prawy>600 and lewy>550:
                     
+                
+                elif czl==1 and prawy>815 and lewy>955:
                     
-                    rm.run_forever(speed_sp=-vel/2)
-                    lm.run_forever(speed_sp=vel/2)
-                    Leds.set_color(Leds.RIGHT,Leds.RED)
-                    while (lewy>450 and war!=2):
-                        gr=csl.green
-                        bl=csl.blue
-                        re=csl.red
-                        lewy=(gr+bl+re)
-                        gr2=csr.green
-                        bl2=csr.blue
-                        re2=csr.red
-                        prawy=(gr2+bl2+re2)
-                        if war==0:
-                            if prawy<110:
-                                war=1
-                        if war==1:
-                            if prawy>250:
-                                war=2
-                        
+                    while prawy>815:
+                            try:
+                                lm.run_forever(speed_sp=-vel/4)
+                                rm.run_forever(speed_sp=vel/4)
+                                rgr=csr.green
+                                rbl=csr.blue
+                                rre=csr.red
+                                prawy=rgr+rbl+rre
+                            except OSError:
+                                lm.stop()
+                                rm.stop()
+                                csl = ColorSensor('in3')
+                                csr = ColorSensor('in2')
+                                ins = InfraredSensor()
+                    czp=0; czl=0
                     Leds.set_color(Leds.LEFT,Leds.GREEN)
                     Leds.set_color(Leds.RIGHT,Leds.GREEN)
-                    war=0
                     
-                    hist=0
-                    gr=csl.green
-                    bl=csl.blue
-                    re=csl.red
-                    lewy=(gr+bl+re)
-                    gr2=csr.green
-                    bl2=csr.blue
-                    re2=csr.red
-                    prawy=(gr2+bl2+re2)
-                    error=prawy-lewy
-                    prerror=0
-                    czp=0
                     
-                if czl==1 and lewy>550 and prawy>600:
-                    
-                    lm.run_forever(speed_sp=-vel/2)
-                    rm.run_forever(speed_sp=vel/2)
-                    Leds.set_color(Leds.LEFT,Leds.RED)
-                    while (prawy>500 and war!=2):
-                        gr=csl.green
-                        bl=csl.blue
-                        re=csl.red
-                        lewy=(gr+bl+re)
-                        gr2=csr.green
-                        bl2=csr.blue
-                        re2=csr.red
-                        prawy=(gr2+bl2+re2)
-                        if war==0:
-                            if lewy<90:
-                                war=1
-                        if war==1:
-                            if lewy>200:
-                                war=2
-                        
-                    Leds.set_color(Leds.LEFT,Leds.GREEN)
-                    Leds.set_color(Leds.RIGHT,Leds.GREEN)
-                    war=0
-                    
-                    hist=0
-                    gr=csl.green
-                    bl=csl.blue
-                    re=csl.red
-                    lewy=(gr+bl+re)
-                    gr2=csr.green
-                    bl2=csr.blue
-                    re2=csr.red
-                    prawy=(gr2+bl2+re2)
-                    error=prawy-lewy
-                    prerror=0
-                    czl=0
-                    
+                else:
                 
+                    prerror=error
+                    error=prawy-lewy
                         
-                hist=hist*0.75+error
-                
+                    hist=hist*0.75+error
+                    
 
-                leftvel=vel-(P*error+I*hist+D*(prerror-error))
-                rightvel=vel+(P*error+I*hist+D*(prerror-error))
-                if leftvel>1000:
-                    leftvel=1000
-                if rightvel>1000:
-                    rightvel=1000
-                
-                lm.run_forever(speed_sp=leftvel)
-                rm.run_forever(speed_sp=rightvel)
+                    leftvel=vel-(P*error+I*hist+D*(prerror-error))
+                    rightvel=vel+(P*error+I*hist+D*(prerror-error))
+                    if leftvel>1000:
+                        leftvel=1000
+                    if rightvel>1000:
+                        rightvel=1000
+                    
+                    lm.run_forever(speed_sp=leftvel)
+                    rm.run_forever(speed_sp=rightvel)
+                    
             except OSError:
                 lm.stop()
                 rm.stop()
